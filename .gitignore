@@ -1,0 +1,67 @@
+# ===== Sistema operativo =====
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# ===== Editores / IDE =====
+.vscode/*
+!.vscode/extensions.json
+.idea/
+*.iml
+*.swp
+
+# ===== Secretos y credenciales (NUNCA subir) =====
+.env
+.env.*
+!.env.example
+*.keystore
+*.jks
+*.p12
+*.pem
+key.properties
+local.properties
+google-services.json
+GoogleService-Info.plist
+
+# ===== Android / Kotlin / Java =====
+.gradle/
+build/
+captures/
+.externalNativeBuild/
+.cxx/
+*.apk
+*.aab
+
+# ===== Flutter / Dart =====
+.dart_tool/
+.flutter-plugins
+.flutter-plugins-dependencies
+.packages
+.pub-cache/
+.pub/
+
+# ===== React Native / Node =====
+node_modules/
+npm-debug.log*
+yarn-error.log*
+.expo/
+dist/
+
+# ===== iOS =====
+Pods/
+DerivedData/
+xcuserdata/
+
+# ===== Python (entrenamiento de modelos) =====
+__pycache__/
+*.pyc
+.venv/
+venv/
+.ipynb_checkpoints/
+
+# ===== Datos crudos (subir a Drive, no al repo) =====
+datasets/raw/
+
+# ===== Temporales de Office =====
+~$*
+*.tmp

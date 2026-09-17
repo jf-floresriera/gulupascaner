@@ -1,0 +1,17 @@
+# Normalizar finales de línea
+* text=auto
+*.sh text eol=lf
+*.bat text eol=crlf
+*.ps1 text eol=crlf
+
+# ===== Git LFS: modelos y archivos pesados =====
+*.tflite filter=lfs diff=lfs merge=lfs -text
+*.onnx   filter=lfs diff=lfs merge=lfs -text
+*.pt     filter=lfs diff=lfs merge=lfs -text
+*.pth    filter=lfs diff=lfs merge=lfs -text
+*.h5     filter=lfs diff=lfs merge=lfs -text
+*.keras  filter=lfs diff=lfs merge=lfs -text
+*.mlmodel filter=lfs diff=lfs merge=lfs -text
+*.mp4    filter=lfs diff=lfs merge=lfs -text
+*.pptx   filter=lfs diff=lfs merge=lfs -text
+*.fig    filter=lfs diff=lfs merge=lfs -text
