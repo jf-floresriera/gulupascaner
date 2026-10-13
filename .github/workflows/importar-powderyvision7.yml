@@ -1,0 +1,70 @@
+name: Importar PowderyVision7 (proyecto base)
+
+# Copia el Space de Hugging Face jf-floresriera/powderyvision7
+# dentro de proyecto-base/powderyvision7/ como referencia para GulupaScaner.
+# Se ejecuta al subir este archivo y puede relanzarse a mano desde
+# la pestaña "Actions" → "Run workflow" para volver a sincronizar.
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - .github/workflows/importar-powderyvision7.yml
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: importar-powderyvision7
+  cancel-in-progress: false
+
+env:
+  HF_SPACE: https://huggingface.co/spaces/jf-floresriera/powderyvision7
+  DESTINO: proyecto-base/powderyvision7
+
+jobs:
+  importar:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Clonar este repositorio
+        uses: actions/checkout@v4
+        with:
+          lfs: true
+
+      - name: Activar Git LFS
+        run: git lfs install
+
+      - name: Descargar el Space de Hugging Face (con modelos LFS)
+        run: |
+          rm -rf "$RUNNER_TEMP/space"
+          git clone --depth 1 "$HF_SPACE" "$RUNNER_TEMP/space"
+          git -C "$RUNNER_TEMP/space" lfs pull
+          echo "Commit de origen: $(git -C "$RUNNER_TEMP/space" rev-parse HEAD)"
+          echo "HF_COMMIT=$(git -C "$RUNNER_TEMP/space" rev-parse HEAD)" >> "$GITHUB_ENV"
+
+      - name: Copiar archivos a la subcarpeta
+        run: |
+          mkdir -p "$DESTINO"
+          # Se excluyen .git y .gitattributes del Space: las reglas LFS
+          # del .gitattributes raíz de este repo ya cubren los modelos .pt
+          rsync -a --delete \
+            --exclude '.git' \
+            --exclude '.gitattributes' \
+            "$RUNNER_TEMP/space/" "$DESTINO/"
+          printf '%s\n%s\n' "Origen: $HF_SPACE" "Commit: $HF_COMMIT" > "$DESTINO/ORIGEN.txt"
+          echo "Archivos copiados:"
+          find "$DESTINO" -type f | sort
+
+      - name: Commit y push
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898233+github-actions[bot]@users.noreply.github.com"
+          git add "$DESTINO"
+          if git diff --cached --quiet; then
+            echo "Sin cambios: la copia ya está al día."
+            exit 0
+          fi
+          git lfs ls-files
+          git commit -m "feat(proyecto-base): importar PowderyVision7 desde Hugging Face (${HF_COMMIT:0:7})"
+          git push origin HEAD:main

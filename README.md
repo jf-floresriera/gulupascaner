@@ -56,6 +56,10 @@ gulupascaner/
 ├── models/                   ← Modelos (ML) usados por la app — con Git LFS
 │   └── README.md
 │
+├── proyecto-base/            ← Proyectos de referencia (inspiración y protocolo)
+│   ├── README.md
+│   └── powderyvision7/       ← Copia del Space de Hugging Face PowderyVision7
+│
 ├── docs/                     ← Documentación del proyecto
 │   ├── retos/
 │   │   ├── reto-01-propuesta/
