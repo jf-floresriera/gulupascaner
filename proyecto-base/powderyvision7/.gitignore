@@ -1,0 +1,35 @@
+# Entorno virtual (no subir, es local y pesado)
+.venv/
+
+# Cache de Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Resultados temporales generados por la app
+static/results/
+
+# Archivos de entorno local
+.env
+*.env
+.env.*
+
+# Imagenes de referencia / trabajo temporal
+static/ICON 1.png
+
+# Jupyter
+.ipynb_checkpoints/
+
+# IDEs
+.vscode/
+.idea/
+*.suo
+*.user
+
+# macOS
+.DS_Store
+
+# Windows
+Thumbs.db
+desktop.ini

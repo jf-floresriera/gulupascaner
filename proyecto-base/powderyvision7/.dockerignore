@@ -1,0 +1,28 @@
+# Entorno virtual (no se necesita en Docker)
+.venv/
+
+# Cache de Python
+__pycache__/
+*.pyc
+*.pyo
+
+# Resultados temporales generados
+static/results/
+
+# Scripts de utilidad (no necesarios en producción)
+test_models.py
+test_models_leaf.py
+export_to_onnx.py
+generate_icons.py
+
+# Git
+.git/
+.gitignore
+
+# Archivos de entorno local
+.env
+*.env
+
+# Documentos
+*.md
+*.txt.bak
