@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Tema base de la ventana; los colores reales viven en ui/theme (Compose). -->
+    <style name="Theme.GulupaScan" parent="android:Theme.Material.Light.NoActionBar">
+        <item name="android:windowBackground">@color/splash_green</item>
+        <item name="android:statusBarColor">@color/splash_green</item>
+        <item name="android:navigationBarColor">@color/splash_green</item>
+    </style>
+
+    <color name="splash_green">#FF0E4421</color>
+    <color name="cream">#FFF8F5EA</color>
+    <color name="ic_launcher_background">#FFF8F5EA</color>
+</resources>

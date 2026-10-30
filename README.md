@@ -51,7 +51,9 @@ gulupascaner/
 ├── .gitattributes            ← Reglas de Git LFS y fin de línea
 │
 ├── app/                      ← Código fuente de la aplicación móvil
-│   └── README.md
+│   ├── README.md             ← Cómo ejecutar la app y desplegar la API
+│   ├── android/              ← App nativa Kotlin + Jetpack Compose (Android Studio)
+│   └── backend/api.py        ← API JSON sobre el pipeline de PowderyVision7
 │
 ├── models/                   ← Modelos (ML) usados por la app — con Git LFS
 │   └── README.md
