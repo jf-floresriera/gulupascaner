@@ -70,3 +70,20 @@ jobs:
         with:
           files: app/android/dist/*.apk
           generate_release_notes: true
+
+      - name: Reportar error como comentario del commit
+        if: failure()
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          {
+            echo "### ❌ Falló la compilación del APK"
+            echo '```'
+            if [ -f build.log ]; then
+              (grep -E '^e: |^w: .*error|What went wrong|ERROR|FAILED|Could not' -A4 build.log || tail -n 80 build.log) | head -n 120
+            else
+              echo "No existe build.log: falló un paso antes de Gradle."
+            fi
+            echo '```'
+          } > comment.md
+          gh api "repos/${GITHUB_REPOSITORY}/commits/${GITHUB_SHA}/comments" -F body=@comment.md
