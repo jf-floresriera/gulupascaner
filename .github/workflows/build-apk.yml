@@ -28,9 +28,9 @@ jobs:
       run:
         working-directory: app/android
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
-      - uses: actions/setup-java@v4
+      - uses: actions/setup-java@v5
         with:
           distribution: temurin
           java-version: "17"
@@ -42,7 +42,14 @@ jobs:
       - name: Compilar APK (debug)
         run: |
           chmod +x gradlew
-          ./gradlew assembleDebug --stacktrace
+          set -o pipefail
+          ./gradlew assembleDebug --console=plain 2>&1 | tee build.log || {
+            # Publica los errores como anotaciones visibles en GitHub.
+            grep -E '^e: |error:|What went wrong|ERROR:' -A3 build.log | head -60 | while IFS= read -r line; do
+              echo "::error title=Gradle::${line}"
+            done
+            exit 1
+          }
 
       - name: Renombrar APK
         run: |
