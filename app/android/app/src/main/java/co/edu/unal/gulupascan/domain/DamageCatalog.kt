@@ -8,7 +8,7 @@ import co.edu.unal.gulupascan.ui.theme.DamageMildew
 import co.edu.unal.gulupascan.ui.theme.DamageScab
 import co.edu.unal.gulupascan.ui.theme.DamageThrips
 import co.edu.unal.gulupascan.ui.theme.Healthy
-import co.edu.unal.gulupascan.ui.theme.TextSoft
+import co.edu.unal.gulupascan.ui.theme.Neutral
 
 /**
  * Catálogo de tipos de daño. La API devuelve una "key"; aquí se traduce a nombre,
@@ -35,5 +35,5 @@ object DamageCatalog {
     ).associateBy { it.key }
 
     fun get(key: String): DamageInfo =
-        items[key] ?: DamageInfo(key, R.string.dmg_unknown, null, R.string.dmg_unknown_desc, TextSoft)
+        items[key] ?: DamageInfo(key, R.string.dmg_unknown, null, R.string.dmg_unknown_desc, Neutral)
 }

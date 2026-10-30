@@ -136,6 +136,10 @@
     <string name="prof_settings">Account settings</string>
     <string name="prof_about">About us</string>
     <string name="prof_logout">Sign out</string>
+    <string name="set_theme">App theme</string>
+    <string name="theme_green">Green (mockup)</string>
+    <string name="theme_purple">Gulupa purple</string>
+    <string name="theme_active">Active</string>
     <string name="set_title">Account settings</string>
     <string name="set_profile">Profile</string>
     <string name="set_role">Role / occupation</string>

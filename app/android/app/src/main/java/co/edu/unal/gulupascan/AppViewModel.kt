@@ -21,6 +21,7 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -46,6 +47,11 @@ class AppViewModel(app: Application) : AndroidViewModel(app) {
         .stateIn(viewModelScope, SharingStarted.Eagerly, UserProfile())
     val settings: StateFlow<AppSettings> = session.settings
         .stateIn(viewModelScope, SharingStarted.Eagerly, AppSettings())
+
+    /** Tema guardado; null mientras se lee (evita mostrar un instante el tema equivocado). */
+    val theme: StateFlow<co.edu.unal.gulupascan.ui.theme.AppTheme?> = session.settings
+        .map { it.theme }
+        .stateIn(viewModelScope, SharingStarted.Eagerly, null)
 
     private val _scan = MutableStateFlow<ScanState>(ScanState.Idle)
     val scan: StateFlow<ScanState> = _scan.asStateFlow()
@@ -172,4 +178,5 @@ class AppViewModel(app: Application) : AndroidViewModel(app) {
     fun logout() = viewModelScope.launch { session.logout() }
     fun updateProfile(p: UserProfile) = viewModelScope.launch { session.updateProfile(p) }
     fun updateSettings(s: AppSettings) = viewModelScope.launch { session.updateSettings(s) }
+    fun setTheme(t: co.edu.unal.gulupascan.ui.theme.AppTheme) = viewModelScope.launch { session.setTheme(t) }
 }

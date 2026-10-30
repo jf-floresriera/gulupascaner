@@ -7,6 +7,7 @@ import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import co.edu.unal.gulupascan.BuildConfig
+import co.edu.unal.gulupascan.ui.theme.AppTheme
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
@@ -26,6 +27,7 @@ data class UserProfile(
 data class AppSettings(
     val serverUrl: String = BuildConfig.DEFAULT_SERVER_URL,
     val demoMode: Boolean = false,
+    val theme: AppTheme = AppTheme.GREEN,
 )
 
 /**
@@ -46,6 +48,7 @@ class SessionStore(private val context: Context) {
         val phone = stringPreferencesKey("phone")
         val server = stringPreferencesKey("server_url")
         val demo = booleanPreferencesKey("demo_mode")
+        val theme = stringPreferencesKey("theme")
     }
 
     val loggedIn: Flow<Boolean> = context.dataStore.data.map { it[K.loggedIn] ?: false }
@@ -56,6 +59,7 @@ class SessionStore(private val context: Context) {
         AppSettings(
             serverUrl = it[K.server]?.takeIf { s -> s.isNotBlank() } ?: BuildConfig.DEFAULT_SERVER_URL,
             demoMode = it[K.demo] ?: false,
+            theme = AppTheme.from(it[K.theme]),
         )
     }
 
@@ -93,7 +97,10 @@ class SessionStore(private val context: Context) {
     suspend fun updateSettings(s: AppSettings) = context.dataStore.edit {
         it[K.server] = s.serverUrl.trim()
         it[K.demo] = s.demoMode
+        it[K.theme] = s.theme.id
     }
+
+    suspend fun setTheme(t: AppTheme) = context.dataStore.edit { it[K.theme] = t.id }
 
     private fun Preferences.toProfile() = UserProfile(
         name = this[K.name].orEmpty(),

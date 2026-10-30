@@ -82,8 +82,8 @@ import co.edu.unal.gulupascan.ui.components.SeverityScale
 import co.edu.unal.gulupascan.ui.components.pct
 import co.edu.unal.gulupascan.ui.components.shareContent
 import co.edu.unal.gulupascan.ui.theme.DamageScab
-import co.edu.unal.gulupascan.ui.theme.GreenDark
-import co.edu.unal.gulupascan.ui.theme.GreenLight
+import co.edu.unal.gulupascan.ui.theme.BrandDark
+import co.edu.unal.gulupascan.ui.theme.BrandSoft
 import co.edu.unal.gulupascan.ui.theme.GulupaPurple
 import co.edu.unal.gulupascan.ui.theme.Healthy
 import co.edu.unal.gulupascan.ui.theme.TextSoft
@@ -206,11 +206,11 @@ fun DamageListScreen(a: Analysis, onBack: () -> Unit, onDamage: (String) -> Unit
 private fun DamageRow(a: Analysis, d: Damage, onClick: () -> Unit) {
     val info = DamageCatalog.get(d.key)
     val healthy = d.key == DamageCatalog.HEALTHY
-    GsCard(Modifier.clickable(onClick = onClick), color = if (healthy) GreenLight else MaterialTheme.colorScheme.surface) {
+    GsCard(Modifier.clickable(onClick = onClick), color = if (healthy) BrandSoft else MaterialTheme.colorScheme.surface) {
         Row(Modifier.padding(10.dp), verticalAlignment = Alignment.CenterVertically) {
             Box(Modifier.size(72.dp).clip(RoundedCornerShape(10.dp)).border(2.dp, info.color, RoundedCornerShape(10.dp))) {
                 PathImage(a.images.leaf ?: a.thumbnail, Modifier.fillMaxSize())
-                if (!healthy && a.images.overlay != null) PathImage(a.images.overlay, Modifier.fillMaxSize().alpha(0.7f))
+                if (!healthy) a.images.overlayFor(d.key)?.let { PathImage(it, Modifier.fillMaxSize().alpha(0.7f)) }
             }
             Spacer(Modifier.width(12.dp))
             Column(Modifier.weight(1f)) {
@@ -236,9 +236,9 @@ private fun ModelChip(a: Analysis) {
         listOfNotNull(a.cropName, a.diseaseName).joinToString(" · ").ifBlank { a.modelClass.orEmpty() },
         (a.modelConfidence * 100).toInt(),
     )
-    Surface(shape = RoundedCornerShape(50), color = if (a.isDemo) GulupaPurple.copy(alpha = 0.12f) else GreenLight) {
+    Surface(shape = RoundedCornerShape(50), color = if (a.isDemo) GulupaPurple.copy(alpha = 0.12f) else BrandSoft) {
         Text(text, Modifier.padding(horizontal = 12.dp, vertical = 6.dp), style = MaterialTheme.typography.bodySmall,
-            color = if (a.isDemo) GulupaPurple else GreenDark)
+            color = if (a.isDemo) GulupaPurple else BrandDark)
     }
 }
 
@@ -252,22 +252,23 @@ fun DamageDetailScreen(a: Analysis, key: String, onBack: () -> Unit) {
     val healthy = key == DamageCatalog.HEALTHY
     var opacity by remember { mutableFloatStateOf(0.7f) }
     val level = if (healthy) 0 else Severity.level(d.pct)
+    val overlay = if (healthy) null else a.images.overlayFor(key)
 
     Scaffold(topBar = { GsTopBar(stringResource(R.string.dd_title), onBack) }) { pad ->
         Column(Modifier.padding(pad).fillMaxSize().verticalScroll(rememberScrollState())) {
             Box(Modifier.fillMaxWidth().aspectRatio(1.3f).background(Color.Black)) {
                 PathImage(a.images.leaf ?: a.images.crop ?: a.images.original, Modifier.fillMaxSize(), ContentScale.Fit)
-                if (!healthy && a.images.overlay != null) {
-                    PathImage(a.images.overlay, Modifier.fillMaxSize().alpha(opacity), ContentScale.Fit)
+                if (overlay != null) {
+                    PathImage(overlay, Modifier.fillMaxSize().alpha(opacity), ContentScale.Fit)
                 }
             }
             Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
-                if (!healthy && a.images.overlay != null) {
+                if (overlay != null) {
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         Text(stringResource(R.string.dd_opacity), style = MaterialTheme.typography.bodySmall)
                         Spacer(Modifier.width(12.dp))
                         Slider(opacity, { opacity = it }, Modifier.weight(1f),
-                            colors = SliderDefaults.colors(thumbColor = GreenDark, activeTrackColor = Healthy))
+                            colors = SliderDefaults.colors(thumbColor = BrandDark, activeTrackColor = Healthy))
                     }
                 } else if (!healthy) {
                     InfoNote(stringResource(R.string.dd_no_mask))
@@ -333,7 +334,7 @@ fun ResultScreen(
             ModelChip(a)
 
             // Clasificación general
-            Surface(shape = RoundedCornerShape(14.dp), color = if (cls == Classification.HEALTHY) GreenLight else WarnBg) {
+            Surface(shape = RoundedCornerShape(14.dp), color = if (cls == Classification.HEALTHY) BrandSoft else WarnBg) {
                 Row(Modifier.fillMaxWidth().padding(14.dp), verticalAlignment = Alignment.Top) {
                     Box(Modifier.size(36.dp).clip(CircleShape).background(cls.color.copy(alpha = 0.15f)), contentAlignment = Alignment.Center) {
                         Icon(Icons.Outlined.WarningAmber, null, tint = cls.color)
@@ -378,8 +379,8 @@ fun ResultScreen(
                 shareContent(context, shareText, img)
             }, icon = Icons.Outlined.Share)
             Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-                TextButton(onClick = onTech) { Text(stringResource(R.string.res_tech), color = GreenDark) }
-                TextButton(onClick = onNewScan) { Text(stringResource(R.string.res_new), color = GreenDark) }
+                TextButton(onClick = onTech) { Text(stringResource(R.string.res_tech), color = BrandDark) }
+                TextButton(onClick = onNewScan) { Text(stringResource(R.string.res_new), color = BrandDark) }
             }
         }
     }
@@ -443,7 +444,11 @@ fun TechDetailsScreen(a: Analysis, onBack: () -> Unit) {
             GsCard {
                 Column(Modifier.padding(14.dp), verticalArrangement = Arrangement.spacedBy(6.dp)) {
                     Text(stringResource(R.string.tech_metrics), style = MaterialTheme.typography.titleSmall)
-                    Metric(stringResource(R.string.tech_source), if (a.isDemo) stringResource(R.string.chip_demo) else "YOLO11 + Chan-Vese")
+                    Metric(stringResource(R.string.tech_source), when {
+                        a.isDemo -> stringResource(R.string.chip_demo)
+                        a.modelClass?.startsWith("gulupa") == true -> "YOLO11-seg (gulupa)"
+                        else -> "YOLO11 + Chan-Vese (PowderyVision7)"
+                    })
                     a.modelClass?.let { Metric(stringResource(R.string.tech_class), it) }
                     if (!a.isDemo) {
                         Metric(stringResource(R.string.tech_conf), "${(a.modelConfidence * 100).toInt()} %")

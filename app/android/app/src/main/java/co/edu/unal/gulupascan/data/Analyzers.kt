@@ -70,6 +70,7 @@ private data class ApiImages(
     val result: String? = null,
     val hue: String? = null,
     val panel: String? = null,
+    val overlays: Map<String, String?> = emptyMap(),
 )
 
 class RemoteAnalyzer(private val baseUrl: String) : Analyzer {
@@ -115,6 +116,9 @@ class RemoteAnalyzer(private val baseUrl: String) : Analyzer {
                     result = ImageUtils.saveBase64(workDir, "result.jpg", imgs.result),
                     hue = ImageUtils.saveBase64(workDir, "hue.jpg", imgs.hue),
                     panel = ImageUtils.saveBase64(workDir, "panel.jpg", imgs.panel),
+                    overlays = imgs.overlays.mapNotNull { (k, b64) ->
+                        ImageUtils.saveBase64(workDir, "overlay_${k.filter { it.isLetterOrDigit() || it == '_' }}.png", b64)?.let { k to it }
+                    }.toMap(),
                 ),
                 clsTimeMs = res.clsTimeMs,
                 segTimeMs = res.segTimeMs,

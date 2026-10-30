@@ -80,11 +80,15 @@ import co.edu.unal.gulupascan.ui.components.PrimaryButton
 import co.edu.unal.gulupascan.ui.components.StepBadge
 import co.edu.unal.gulupascan.ui.components.pct
 import co.edu.unal.gulupascan.ui.components.shareContent
-import co.edu.unal.gulupascan.ui.theme.Cream
-import co.edu.unal.gulupascan.ui.theme.Green
-import co.edu.unal.gulupascan.ui.theme.GreenDark
-import co.edu.unal.gulupascan.ui.theme.GreenLight
-import co.edu.unal.gulupascan.ui.theme.GreenMid
+import co.edu.unal.gulupascan.ui.theme.AppBg
+import co.edu.unal.gulupascan.ui.theme.Brand
+import co.edu.unal.gulupascan.ui.theme.BrandDark
+import co.edu.unal.gulupascan.ui.theme.BrandSoft
+import co.edu.unal.gulupascan.ui.theme.AppTheme
+import co.edu.unal.gulupascan.ui.theme.BorderColor
+import co.edu.unal.gulupascan.ui.theme.brandOf
+import co.edu.unal.gulupascan.ui.components.OrganicBlobs
+import co.edu.unal.gulupascan.ui.theme.BrandMid
 import co.edu.unal.gulupascan.ui.theme.TextSoft
 import co.edu.unal.gulupascan.ui.theme.WarnBg
 import kotlinx.coroutines.launch
@@ -163,9 +167,9 @@ fun AlertsScreen(items: List<Analysis>, onOpen: (Analysis) -> Unit, onBack: (() 
         LazyColumn(Modifier.padding(pad).fillMaxSize(), contentPadding = androidx.compose.foundation.layout.PaddingValues(16.dp),
             verticalArrangement = Arrangement.spacedBy(10.dp)) {
             item {
-                GsCard(color = GreenLight) {
+                GsCard(color = BrandSoft) {
                     Row(Modifier.padding(14.dp)) {
-                        Icon(Icons.Outlined.TipsAndUpdates, null, tint = GreenDark)
+                        Icon(Icons.Outlined.TipsAndUpdates, null, tint = BrandDark)
                         Spacer(Modifier.width(10.dp))
                         Column {
                             Text(stringResource(R.string.alerts_tip_title), style = MaterialTheme.typography.titleSmall)
@@ -213,12 +217,14 @@ fun ProfileScreen(
     onLogout: () -> Unit,
 ) {
     val notSet = stringResource(R.string.not_set)
-    Column(Modifier.fillMaxSize().background(Cream).verticalScroll(rememberScrollState())) {
+    Column(Modifier.fillMaxSize().background(AppBg).verticalScroll(rememberScrollState())) {
         Box(Modifier.fillMaxWidth()) {
-            Box(Modifier.fillMaxWidth().height(120.dp).background(GreenMid))
+            Box(Modifier.fillMaxWidth().height(120.dp).background(BrandMid)) {
+                OrganicBlobs(Modifier.fillMaxSize(), color = AppBg.copy(alpha = 0.35f))
+            }
             Box(
                 Modifier.padding(top = 56.dp).size(128.dp).align(Alignment.TopCenter)
-                    .clip(CircleShape).background(Cream).border(4.dp, Cream, CircleShape),
+                    .clip(CircleShape).background(AppBg).border(4.dp, AppBg, CircleShape),
                 contentAlignment = Alignment.Center,
             ) { GulupaLogo(size = 96.dp) }
         }
@@ -246,7 +252,7 @@ fun ProfileScreen(
 private fun InfoRow(icon: ImageVector, label: String, value: String) {
     Row(Modifier.fillMaxWidth().padding(vertical = 6.dp), verticalAlignment = Alignment.CenterVertically) {
         Box(Modifier.size(36.dp).clip(CircleShape).background(MaterialTheme.colorScheme.surfaceVariant), contentAlignment = Alignment.Center) {
-            Icon(icon, null, tint = GreenDark, modifier = Modifier.size(20.dp))
+            Icon(icon, null, tint = BrandDark, modifier = Modifier.size(20.dp))
         }
         Spacer(Modifier.width(12.dp))
         Text("$label: ", style = MaterialTheme.typography.bodyMedium, fontWeight = FontWeight.SemiBold)
@@ -258,7 +264,7 @@ private fun InfoRow(icon: ImageVector, label: String, value: String) {
 private fun MenuRow(icon: ImageVector, text: String, onClick: () -> Unit, chevron: Boolean = true) {
     Column {
         Row(Modifier.fillMaxWidth().clickable(onClick = onClick).padding(vertical = 14.dp), verticalAlignment = Alignment.CenterVertically) {
-            Icon(icon, null, tint = GreenDark)
+            Icon(icon, null, tint = BrandDark)
             Spacer(Modifier.width(12.dp))
             Text(text, Modifier.weight(1f), style = MaterialTheme.typography.bodyLarge)
             if (chevron) Icon(Icons.AutoMirrored.Filled.KeyboardArrowRight, null, tint = TextSoft)
@@ -271,19 +277,32 @@ private fun MenuRow(icon: ImageVector, text: String, onClick: () -> Unit, chevro
 // Configuración de cuenta + servidor
 // ---------------------------------------------------------------------------
 @Composable
-fun SettingsScreen(profile: UserProfile, settings: AppSettings, onSave: (UserProfile, AppSettings) -> Unit, onBack: () -> Unit) {
+fun SettingsScreen(
+    profile: UserProfile,
+    settings: AppSettings,
+    onTheme: (AppTheme) -> Unit,
+    onSave: (UserProfile, AppSettings) -> Unit,
+    onBack: () -> Unit,
+) {
     var name by remember(profile) { mutableStateOf(profile.name) }
     var role by remember(profile) { mutableStateOf(profile.role) }
     var location by remember(profile) { mutableStateOf(profile.location) }
     var hectares by remember(profile) { mutableStateOf(profile.hectares) }
     var phone by remember(profile) { mutableStateOf(profile.phone) }
-    var server by remember(settings) { mutableStateOf(settings.serverUrl) }
-    var demo by remember(settings) { mutableStateOf(settings.demoMode) }
+    var server by remember(settings.serverUrl) { mutableStateOf(settings.serverUrl) }
+    var demo by remember(settings.demoMode) { mutableStateOf(settings.demoMode) }
 
     Scaffold(topBar = { GsTopBar(stringResource(R.string.set_title), onBack) }) { pad ->
         Column(Modifier.padding(pad).fillMaxSize().verticalScroll(rememberScrollState()).padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(10.dp)) {
-            Text(stringResource(R.string.set_profile), style = MaterialTheme.typography.titleSmall, color = Green)
+            // Tema (se aplica al instante)
+            Text(stringResource(R.string.set_theme), style = MaterialTheme.typography.titleSmall, color = Brand)
+            Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+                ThemeOption(AppTheme.GREEN, R.string.theme_green, settings.theme == AppTheme.GREEN, Modifier.weight(1f)) { onTheme(it) }
+                ThemeOption(AppTheme.PURPLE, R.string.theme_purple, settings.theme == AppTheme.PURPLE, Modifier.weight(1f)) { onTheme(it) }
+            }
+            Spacer(Modifier.height(8.dp))
+            Text(stringResource(R.string.set_profile), style = MaterialTheme.typography.titleSmall, color = Brand)
             Field(stringResource(R.string.auth_name), name) { name = it }
             Field(stringResource(R.string.set_role), role) { role = it }
             Field(stringResource(R.string.prof_location), location) { location = it }
@@ -291,27 +310,51 @@ fun SettingsScreen(profile: UserProfile, settings: AppSettings, onSave: (UserPro
             Field(stringResource(R.string.prof_contact), phone) { phone = it }
 
             Spacer(Modifier.height(8.dp))
-            Text(stringResource(R.string.set_analysis), style = MaterialTheme.typography.titleSmall, color = Green)
+            Text(stringResource(R.string.set_analysis), style = MaterialTheme.typography.titleSmall, color = Brand)
             Field(stringResource(R.string.set_server), server) { server = it }
             TextButton(onClick = { server = BuildConfig.DEFAULT_SERVER_URL }) {
-                Text(stringResource(R.string.set_server_reset), color = GreenDark)
+                Text(stringResource(R.string.set_server_reset), color = BrandDark)
             }
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Column(Modifier.weight(1f)) {
                     Text(stringResource(R.string.set_demo), style = MaterialTheme.typography.bodyLarge)
                     Text(stringResource(R.string.set_demo_desc), style = MaterialTheme.typography.bodySmall, color = TextSoft)
                 }
-                Switch(demo, { demo = it }, colors = SwitchDefaults.colors(checkedTrackColor = GreenDark))
+                Switch(demo, { demo = it }, colors = SwitchDefaults.colors(checkedTrackColor = BrandDark))
             }
             InfoNote(stringResource(R.string.set_server_note))
             Spacer(Modifier.height(8.dp))
             PrimaryButton(stringResource(R.string.save), {
                 onSave(
                     profile.copy(name = name.trim(), role = role.trim(), location = location.trim(), hectares = hectares.trim(), phone = phone.trim()),
-                    AppSettings(serverUrl = server.trim(), demoMode = demo),
+                    settings.copy(serverUrl = server.trim(), demoMode = demo),
                 )
             })
         }
+    }
+}
+
+@Composable
+private fun ThemeOption(theme: AppTheme, label: Int, selected: Boolean, modifier: Modifier, onClick: (AppTheme) -> Unit) {
+    val b = brandOf(theme)
+    Column(
+        modifier.clip(RoundedCornerShape(14.dp))
+            .border(if (selected) 3.dp else 1.dp, if (selected) b.dark else BorderColor, RoundedCornerShape(14.dp))
+            .clickable { onClick(theme) }
+            .background(b.background)
+            .padding(12.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+    ) {
+        Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
+            listOf(b.dark, b.mid, b.accent, b.soft).forEach { c ->
+                Box(Modifier.size(18.dp).clip(CircleShape).background(c).border(1.dp, b.border, CircleShape))
+            }
+        }
+        Spacer(Modifier.height(8.dp))
+        GulupaLogo(size = 40.dp, ring = b.main)
+        Spacer(Modifier.height(6.dp))
+        Text(stringResource(label), style = MaterialTheme.typography.titleSmall, color = b.dark)
+        if (selected) Text(stringResource(R.string.theme_active), style = MaterialTheme.typography.bodySmall, color = b.textSoft)
     }
 }
 
@@ -341,8 +384,8 @@ fun AboutScreen(onBack: () -> Unit) {
                 "Luis Alberto Castillo Sanabria",
             ).forEach { member ->
                 Row(verticalAlignment = Alignment.CenterVertically) {
-                    Box(Modifier.size(34.dp).clip(CircleShape).background(GreenLight), contentAlignment = Alignment.Center) {
-                        Text(member.split(" ").let { "${it[0][0]}${it.getOrNull(2)?.get(0) ?: ""}" }, color = GreenDark, fontWeight = FontWeight.Bold)
+                    Box(Modifier.size(34.dp).clip(CircleShape).background(BrandSoft), contentAlignment = Alignment.Center) {
+                        Text(member.split(" ").let { "${it[0][0]}${it.getOrNull(2)?.get(0) ?: ""}" }, color = BrandDark, fontWeight = FontWeight.Bold)
                     }
                     Spacer(Modifier.width(10.dp))
                     Text(member, style = MaterialTheme.typography.bodyMedium)

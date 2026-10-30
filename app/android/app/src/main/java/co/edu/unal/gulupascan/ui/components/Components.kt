@@ -54,9 +54,10 @@ import androidx.compose.ui.unit.sp
 import androidx.core.content.FileProvider
 import co.edu.unal.gulupascan.R
 import co.edu.unal.gulupascan.domain.Severity
-import co.edu.unal.gulupascan.ui.theme.CreamBorder
-import co.edu.unal.gulupascan.ui.theme.Green
-import co.edu.unal.gulupascan.ui.theme.GreenDark
+import co.edu.unal.gulupascan.ui.theme.BorderColor
+import co.edu.unal.gulupascan.ui.theme.Brand
+import co.edu.unal.gulupascan.ui.theme.BrandDark
+import co.edu.unal.gulupascan.ui.theme.LeafGreen
 import co.edu.unal.gulupascan.ui.theme.Pulp
 import co.edu.unal.gulupascan.ui.theme.Seed
 import co.edu.unal.gulupascan.ui.theme.TextSoft
@@ -67,7 +68,7 @@ import kotlin.math.sin
 
 /** Logo del mockup: gulupa abierta con semillas, anillo verde, tallo y hoja. */
 @Composable
-fun GulupaLogo(modifier: Modifier = Modifier, size: Dp = 64.dp, ring: Color = Green, onDark: Boolean = false) {
+fun GulupaLogo(modifier: Modifier = Modifier, size: Dp = 64.dp, ring: Color = Brand, onDark: Boolean = false) {
     Canvas(modifier.size(size)) {
         val w = this.size.width
         val c = Offset(w / 2f, w * 0.58f)
@@ -82,7 +83,7 @@ fun GulupaLogo(modifier: Modifier = Modifier, size: Dp = 64.dp, ring: Color = Gr
             cubicTo(sx + w * 0.2f, sy + w * 0.02f, sx + w * 0.08f, sy + w * 0.04f, sx, sy)
             close()
         }
-        drawPath(leaf, Color(0xFF4CAF50))
+        drawPath(leaf, LeafGreen)
         // Fruto
         if (onDark) drawCircle(Color.White, r * 1.02f, c)
         drawCircle(Pulp, r * 0.8f, c)
@@ -107,7 +108,7 @@ fun BrandHeader(subtitle: String?, modifier: Modifier = Modifier, logoSize: Dp =
         GulupaLogo(size = logoSize)
         Spacer(Modifier.width(10.dp))
         Column {
-            Text(stringResource(R.string.app_name), style = MaterialTheme.typography.headlineMedium, color = GreenDark)
+            Text(stringResource(R.string.app_name), style = MaterialTheme.typography.headlineMedium, color = BrandDark)
             if (subtitle != null) Text(subtitle, style = MaterialTheme.typography.bodyMedium, color = TextSoft)
         }
     }
@@ -135,7 +136,7 @@ fun PrimaryButton(text: String, onClick: () -> Unit, modifier: Modifier = Modifi
         enabled = enabled,
         modifier = modifier.fillMaxWidth().height(52.dp),
         shape = RoundedCornerShape(26.dp),
-        colors = ButtonDefaults.buttonColors(containerColor = GreenDark),
+        colors = ButtonDefaults.buttonColors(containerColor = BrandDark),
     ) {
         if (icon != null) {
             Icon(icon, null, Modifier.size(20.dp)); Spacer(Modifier.width(8.dp))
@@ -153,9 +154,9 @@ fun SecondaryButton(text: String, onClick: () -> Unit, modifier: Modifier = Modi
         contentPadding = PaddingValues(horizontal = 16.dp),
     ) {
         if (icon != null) {
-            Icon(icon, null, Modifier.size(20.dp), tint = GreenDark); Spacer(Modifier.width(8.dp))
+            Icon(icon, null, Modifier.size(20.dp), tint = BrandDark); Spacer(Modifier.width(8.dp))
         }
-        Text(text, color = GreenDark, style = MaterialTheme.typography.labelLarge)
+        Text(text, color = BrandDark, style = MaterialTheme.typography.labelLarge)
     }
 }
 
@@ -167,7 +168,7 @@ fun ColorDot(color: Color, size: Dp = 12.dp) {
 /** Número dentro de un círculo verde, como los pasos 1-5 del mockup. */
 @Composable
 fun StepBadge(number: Int, size: Dp = 28.dp) {
-    Box(Modifier.size(size).clip(CircleShape).background(Green), contentAlignment = Alignment.Center) {
+    Box(Modifier.size(size).clip(CircleShape).background(Brand), contentAlignment = Alignment.Center) {
         Text("$number", color = Color.White, fontWeight = FontWeight.Bold, fontSize = 14.sp)
     }
 }
@@ -176,7 +177,7 @@ fun StepBadge(number: Int, size: Dp = 28.dp) {
 fun InfoNote(text: String, modifier: Modifier = Modifier) {
     Surface(modifier.fillMaxWidth(), shape = RoundedCornerShape(12.dp), color = MaterialTheme.colorScheme.surfaceVariant) {
         Row(Modifier.padding(12.dp), verticalAlignment = Alignment.Top) {
-            Icon(Icons.Outlined.Info, null, tint = GreenDark, modifier = Modifier.size(20.dp))
+            Icon(Icons.Outlined.Info, null, tint = BrandDark, modifier = Modifier.size(20.dp))
             Spacer(Modifier.width(10.dp))
             Text(text, style = MaterialTheme.typography.bodySmall, color = TextSoft)
         }
@@ -186,7 +187,7 @@ fun InfoNote(text: String, modifier: Modifier = Modifier) {
 @Composable
 fun GsCard(modifier: Modifier = Modifier, color: Color = MaterialTheme.colorScheme.surface, content: @Composable () -> Unit) {
     Surface(
-        modifier.fillMaxWidth().border(1.dp, CreamBorder, RoundedCornerShape(16.dp)),
+        modifier.fillMaxWidth().border(1.dp, BorderColor, RoundedCornerShape(16.dp)),
         shape = RoundedCornerShape(16.dp),
         color = color,
     ) { content() }
@@ -241,3 +242,48 @@ fun shareContent(context: Context, text: String, file: File?, mime: String = "im
 }
 
 fun pct(v: Double): String = String.format(java.util.Locale.getDefault(), "%.1f %%", v)
+
+/**
+ * Formas orgánicas en las esquinas, como en las láminas de la presentación (tema morado).
+ * No dibuja nada en el tema verde.
+ */
+@Composable
+fun OrganicBlobs(modifier: Modifier = Modifier, color: Color = co.edu.unal.gulupascan.ui.theme.LocalBrand.current.accent.copy(alpha = 0.55f)) {
+    if (!co.edu.unal.gulupascan.ui.theme.LocalBrand.current.decorated) return
+    Canvas(modifier) {
+        val w = size.width
+        val h = size.height
+        // Esquina superior izquierda
+        drawPath(Path().apply {
+            moveTo(0f, 0f)
+            lineTo(w * 0.34f, 0f)
+            cubicTo(w * 0.30f, h * 0.06f, w * 0.20f, h * 0.05f, w * 0.17f, h * 0.10f)
+            cubicTo(w * 0.13f, h * 0.16f, w * 0.06f, h * 0.17f, 0f, h * 0.15f)
+            close()
+        }, color)
+        // Esquina superior derecha
+        drawPath(Path().apply {
+            moveTo(w, 0f)
+            lineTo(w * 0.80f, 0f)
+            cubicTo(w * 0.78f, h * 0.05f, w * 0.86f, h * 0.07f, w * 0.88f, h * 0.11f)
+            cubicTo(w * 0.90f, h * 0.15f, w * 0.96f, h * 0.17f, w, h * 0.16f)
+            close()
+        }, color)
+        // Esquina inferior izquierda
+        drawPath(Path().apply {
+            moveTo(0f, h)
+            lineTo(0f, h * 0.82f)
+            cubicTo(w * 0.10f, h * 0.80f, w * 0.18f, h * 0.86f, w * 0.20f, h * 0.91f)
+            cubicTo(w * 0.22f, h * 0.96f, w * 0.30f, h * 0.97f, w * 0.32f, h)
+            close()
+        }, color)
+        // Esquina inferior derecha
+        drawPath(Path().apply {
+            moveTo(w, h)
+            lineTo(w * 0.70f, h)
+            cubicTo(w * 0.74f, h * 0.95f, w * 0.82f, h * 0.95f, w * 0.85f, h * 0.90f)
+            cubicTo(w * 0.88f, h * 0.85f, w * 0.95f, h * 0.84f, w, h * 0.86f)
+            close()
+        }, color)
+    }
+}
