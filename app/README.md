@@ -49,6 +49,17 @@ Lo que se conserva de la versión web: flujo cargar → analizar → resultados 
 mensajes de error del pipeline (EN/ES según el idioma del teléfono), consejos para la foto
 (antes el tutorial), alcance del modelo y exportación a CSV.
 
+## Descargar el APK (sin Android Studio)
+
+GitHub compila el APK solo, con el flujo `.github/workflows/build-apk.yml`:
+
+- **Cada push** que cambie `app/android/` genera el APK: pestaña **Actions** › *Compilar APK* ›
+  la ejecución más reciente › sección **Artifacts** › `GulupaScan-apk` (se descarga un .zip con
+  el .apk adentro; requiere haber iniciado sesión en GitHub; se guarda 30 días).
+- **Releases** (enlace público y permanente): *Releases › Draft a new release* › crea una
+  etiqueta como `v0.3.0` › *Publish release*. En 5-10 minutos el APK aparece en *Assets*.
+- Para instalarlo: abre el .apk en el celular y permite "Instalar apps de origen desconocido".
+
 ## Cómo ejecutar la app
 
 1. Instala **Android Studio** (Koala 2024.1 o más reciente).
