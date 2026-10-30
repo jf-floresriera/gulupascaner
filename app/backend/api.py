@@ -25,11 +25,22 @@ import uuid
 
 import cv2
 import numpy as np
-from flask import jsonify, request
+from flask import Flask, jsonify, request
 
-import segment_mildew
-from app import app  # app Flask original (ruta "/")
-from pipeline import run_full_pipeline
+import gulupa_pipeline
+
+# Pipeline de PowderyVision7 (opcional cuando ya exista el modelo de gulupa).
+try:
+    import segment_mildew
+    from app import app  # app Flask original (ruta "/")
+    from pipeline import run_full_pipeline
+    HAS_PV7 = True
+except Exception as _e:  # noqa: BLE001
+    if not gulupa_pipeline.available():
+        raise
+    print(f"[api] PowderyVision7 no disponible ({_e}); se usa solo el modelo de gulupa.")
+    app = Flask(__name__)
+    HAS_PV7 = False
 
 API_VERSION = 1
 MAX_SIDE_UPLOAD = 1600   # reduce fotos enormes del celular antes del pipeline
@@ -44,19 +55,23 @@ JPEG_QUALITY = 85
 # (pantalla "Detalles" del mockup), sin tocar el código original.
 # ---------------------------------------------------------------------------
 _capture = threading.local()
-_original_panel_fn = segment_mildew._panel_to_array
+
+if HAS_PV7:
+    _original_panel_fn = segment_mildew._panel_to_array
+
+    def _panel_hook(rgb, Lr_u, ent_u, deltaE, seg, vis, porcentaje):
+        _capture.layers = {
+            "leaf_rgb": np.asarray(rgb).copy(),
+            "mask": np.asarray(seg).copy(),
+            "result_rgb": np.asarray(vis).copy(),
+        }
+        return _original_panel_fn(rgb, Lr_u, ent_u, deltaE, seg, vis, porcentaje)
+
+    segment_mildew._panel_to_array = _panel_hook
 
 
-def _panel_hook(rgb, Lr_u, ent_u, deltaE, seg, vis, porcentaje):
-    _capture.layers = {
-        "leaf_rgb": np.asarray(rgb).copy(),
-        "mask": np.asarray(seg).copy(),
-        "result_rgb": np.asarray(vis).copy(),
-    }
-    return _original_panel_fn(rgb, Lr_u, ent_u, deltaE, seg, vis, porcentaje)
-
-
-segment_mildew._panel_to_array = _panel_hook
+def engine():
+    return "gulupa" if gulupa_pipeline.available() else "powderyvision7"
 
 
 # ---------------------------------------------------------------------------
@@ -132,7 +147,30 @@ def _damages(res):
 # ---------------------------------------------------------------------------
 @app.route("/api/health", methods=["GET"])
 def api_health():
-    return jsonify({"ok": True, "api_version": API_VERSION})
+    return jsonify({"ok": True, "api_version": API_VERSION, "engine": engine(),
+                    "gulupa_model": gulupa_pipeline.MODEL_PATH if gulupa_pipeline.available() else None})
+
+
+def _analyze_gulupa(bgr):
+    res = gulupa_pipeline.analyze(bgr)
+    layers = res.pop("layers", {}) or {}
+    images = {
+        "original": _b64(layers.get("original")),
+        "crop": _b64(layers.get("crop")),
+        "leaf": _b64(layers.get("leaf")),
+        "mask": _b64(layers.get("mask"), ".png"),
+        "overlay": _b64(layers.get("overlay"), ".png"),
+        "result": _b64(layers.get("result")),
+        "hue": _b64(layers.get("hue")),
+        "panel": None,
+        "overlays": {k: _b64(v, ".png") for k, v in (layers.get("overlays") or {}).items()},
+    }
+    msg_en, msg_es = _split_bilingual(res.get("msg"))
+    res.update({"api_version": API_VERSION, "engine": "gulupa", "msg_en": msg_en, "msg_es": msg_es,
+                "images": images})
+    if not res.get("ok"):
+        res["damages"] = []
+    return jsonify(res)
 
 
 @app.route("/api/analyze", methods=["POST"])
@@ -152,6 +190,15 @@ def api_analyze():
         }), 400
 
     bgr = _resize_max(bgr, MAX_SIDE_UPLOAD)
+
+    if gulupa_pipeline.available():
+        try:
+            return _analyze_gulupa(bgr)
+        except Exception as e:  # noqa: BLE001
+            return jsonify({
+                "ok": False, "api_version": API_VERSION,
+                "msg": f"Gulupa model error: {e} / Error en el modelo de gulupa: {e}",
+            }), 500
 
     prefix = "api_" + uuid.uuid4().hex[:8]
     save_root = os.path.join("static", "results", prefix)
@@ -179,6 +226,7 @@ def api_analyze():
         payload = {
             "ok": bool(res.get("ok")),
             "api_version": API_VERSION,
+            "engine": "powderyvision7",
             "msg": res.get("msg"),
             "msg_en": msg_en,
             "msg_es": msg_es,

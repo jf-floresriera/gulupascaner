@@ -102,17 +102,14 @@ La URL del servidor viene configurada en `app/android/app/build.gradle.kts`
 
 ## Cuando exista el modelo de gulupa
 
-La app ya muestra cualquier lista de daños. Solo hay que:
+Ya está listo: `backend/gulupa_pipeline.py` se activa solo cuando el servidor tiene
+`models/gulupa_seg.pt`. Pasos completos (clases a anotar, entrenamiento, dónde subir los pesos
+y cómo verificar): [`docs/guia-modelos.md`](../docs/guia-modelos.md).
 
-1. En `api.py › _damages()` devolver las claves `scab` (roña), `mechanical` (daño mecánico),
-   `thrips` (trips) con su porcentaje (y opcionalmente `area_cm2`).
-2. Si aparece un daño nuevo, agregarlo en `domain/DamageCatalog.kt` y sus textos en
-   `res/values/strings.xml`.
-3. Ajustar los umbrales de severidad en `domain/Severity.kt` con el asesor agrónomo.
+## Temas
 
-> Para análisis **offline** en el teléfono, el siguiente paso sería exportar los modelos YOLO11 a
-> TensorFlow Lite (`yolo export format=tflite`) e implementar otra clase `Analyzer` en
-> `data/Analyzers.kt`; el resto de la app no cambia.
+*Perfil › Configuración de cuenta › Tema de la app*: **Verde** (mockup) o **Morado gulupa**
+(colores y formas orgánicas de la presentación). Se aplica al instante y queda guardado.
 
 ## Limitaciones conocidas
 

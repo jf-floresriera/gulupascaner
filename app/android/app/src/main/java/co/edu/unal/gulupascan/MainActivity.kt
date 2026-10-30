@@ -21,6 +21,8 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.SideEffect
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -46,8 +48,9 @@ import co.edu.unal.gulupascan.ui.screens.ResultScreen
 import co.edu.unal.gulupascan.ui.screens.SettingsScreen
 import co.edu.unal.gulupascan.ui.screens.SplashScreen
 import co.edu.unal.gulupascan.ui.screens.TechDetailsScreen
-import co.edu.unal.gulupascan.ui.theme.GreenDark
-import co.edu.unal.gulupascan.ui.theme.GreenLight
+import co.edu.unal.gulupascan.ui.theme.BrandDark
+import co.edu.unal.gulupascan.ui.theme.GulupaScanTheme
+import co.edu.unal.gulupascan.ui.theme.BrandSoft
 
 class MainActivity : ComponentActivity() {
     private val vm: AppViewModel by viewModels()
@@ -55,7 +58,21 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            co.edu.unal.gulupascan.ui.theme.GulupaScanTheme { GulupaScanApp(vm) }
+            val theme by vm.theme.collectAsStateWithLifecycle()
+            val t = theme
+            if (t == null) {
+                Box(Modifier.fillMaxSize())
+            } else {
+                GulupaScanTheme(t) {
+                    // Barra de estado y de navegación del color del tema.
+                    val bar = BrandDark.toArgb()
+                    SideEffect {
+                        window.statusBarColor = bar
+                        window.navigationBarColor = bar
+                    }
+                    GulupaScanApp(vm)
+                }
+            }
         }
     }
 }
@@ -187,9 +204,10 @@ fun GulupaScanApp(vm: AppViewModel) {
                     )
                 }
                 composable(Routes.SETTINGS) {
-                    SettingsScreen(profile, settings, onSave = { p, s ->
-                        vm.updateProfile(p); vm.updateSettings(s); nav.popBackStack()
-                    }, onBack = { nav.popBackStack() })
+                    SettingsScreen(profile, settings,
+                        onTheme = { vm.setTheme(it) },
+                        onSave = { p, s -> vm.updateProfile(p); vm.updateSettings(s); nav.popBackStack() },
+                        onBack = { nav.popBackStack() })
                 }
                 composable(Routes.ABOUT) { AboutScreen { nav.popBackStack() } }
             }
@@ -220,9 +238,9 @@ private fun BottomBar(nav: NavHostController, currentRoute: String?) {
                 icon = { Icon(tab.icon, null) },
                 label = { Text(stringResource(tab.label)) },
                 colors = NavigationBarItemDefaults.colors(
-                    selectedIconColor = GreenDark,
-                    selectedTextColor = GreenDark,
-                    indicatorColor = GreenLight,
+                    selectedIconColor = BrandDark,
+                    selectedTextColor = BrandDark,
+                    indicatorColor = BrandSoft,
                 ),
             )
         }

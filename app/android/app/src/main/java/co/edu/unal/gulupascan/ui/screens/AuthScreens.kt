@@ -42,9 +42,10 @@ import androidx.compose.ui.unit.sp
 import co.edu.unal.gulupascan.AppViewModel
 import co.edu.unal.gulupascan.R
 import co.edu.unal.gulupascan.ui.components.GulupaLogo
+import co.edu.unal.gulupascan.ui.components.OrganicBlobs
 import co.edu.unal.gulupascan.ui.components.PrimaryButton
-import co.edu.unal.gulupascan.ui.theme.Green
-import co.edu.unal.gulupascan.ui.theme.GreenDark
+import co.edu.unal.gulupascan.ui.theme.Brand
+import co.edu.unal.gulupascan.ui.theme.BrandDark
 import co.edu.unal.gulupascan.ui.theme.TextSoft
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -58,7 +59,8 @@ fun SplashScreen(loggedIn: Boolean?, onFinish: (loggedIn: Boolean) -> Unit) {
             onFinish(loggedIn)
         }
     }
-    Box(Modifier.fillMaxSize().background(GreenDark), contentAlignment = Alignment.Center) {
+    Box(Modifier.fillMaxSize().background(BrandDark), contentAlignment = Alignment.Center) {
+        OrganicBlobs(Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background)
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
             GulupaLogo(size = 120.dp, onDark = true)
             Spacer(Modifier.height(16.dp))
@@ -93,8 +95,10 @@ fun AuthScreen(vm: AppViewModel, onLoggedIn: () -> Unit) {
 
     LaunchedEffect(Unit) { if (!vm.hasAccount()) registerMode = true }
 
+    Box(Modifier.fillMaxSize().background(MaterialTheme.colorScheme.background)) {
+    OrganicBlobs(Modifier.fillMaxSize())
     Column(
-        Modifier.fillMaxSize().background(MaterialTheme.colorScheme.background)
+        Modifier.fillMaxSize()
             .verticalScroll(rememberScrollState()).imePadding().padding(28.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
@@ -102,7 +106,7 @@ fun AuthScreen(vm: AppViewModel, onLoggedIn: () -> Unit) {
         Row(verticalAlignment = Alignment.CenterVertically) {
             GulupaLogo(size = 56.dp)
             Spacer(Modifier.padding(4.dp))
-            Text(stringResource(R.string.app_name), style = MaterialTheme.typography.headlineMedium, color = GreenDark)
+            Text(stringResource(R.string.app_name), style = MaterialTheme.typography.headlineMedium, color = BrandDark)
         }
         Spacer(Modifier.height(8.dp))
         Text(
@@ -163,7 +167,7 @@ fun AuthScreen(vm: AppViewModel, onLoggedIn: () -> Unit) {
         )
         if (!registerMode) {
             TextButton(onClick = { showForgot = true }) {
-                Text(stringResource(R.string.auth_forgot), color = Green, textDecoration = TextDecoration.Underline)
+                Text(stringResource(R.string.auth_forgot), color = Brand, textDecoration = TextDecoration.Underline)
             }
         }
         Spacer(Modifier.height(8.dp))
@@ -172,12 +176,13 @@ fun AuthScreen(vm: AppViewModel, onLoggedIn: () -> Unit) {
             TextButton(onClick = { registerMode = !registerMode; error = null }) {
                 Text(
                     stringResource(if (registerMode) R.string.auth_login_btn else R.string.auth_register_link),
-                    color = Green, textDecoration = TextDecoration.Underline,
+                    color = Brand, textDecoration = TextDecoration.Underline,
                 )
             }
         }
         Spacer(Modifier.height(16.dp))
         Text(stringResource(R.string.auth_local_note), style = MaterialTheme.typography.bodySmall, color = TextSoft, textAlign = TextAlign.Center)
+    }
     }
 
     if (showForgot) {

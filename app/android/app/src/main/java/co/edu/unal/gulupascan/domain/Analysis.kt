@@ -59,8 +59,12 @@ data class AnalysisImages(
     val crop: String? = null,
     val leaf: String? = null,      // foto sin fondo
     val mask: String? = null,      // máscara binaria de lesión
-    val overlay: String? = null,   // máscara coloreada transparente
+    val overlay: String? = null,   // máscara coloreada transparente (todos los daños)
+    val overlays: Map<String, String> = emptyMap(), // máscara por tipo de daño (modelo de gulupa)
     val result: String? = null,    // resultado final con contornos
     val hue: String? = null,       // canal H (HSV)
     val panel: String? = null,     // panel 2x3 del pipeline original
-)
+) {
+    /** Máscara del daño [key]; si no hay una propia, la combinada. */
+    fun overlayFor(key: String): String? = overlays[key] ?: overlay
+}
