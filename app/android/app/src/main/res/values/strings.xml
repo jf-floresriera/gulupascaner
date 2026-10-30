@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">GulupaScan</string>
-    <string name="splash_tagline">Detecta daños en tu gulupa</string>
+    <string name="splash_tagline">Detecta tu roña en la gulupa</string>
+    <string name="proc_analyzing">Analizando tu gulupa…</string>
     <string name="ok">Entendido</string>
     <string name="cancel">Cancelar</string>
     <string name="back">Atrás</string>
@@ -138,7 +139,7 @@
     <string name="prof_about">Acerca de nosotros</string>
     <string name="prof_logout">Cerrar sesión</string>
     <string name="set_theme">Tema de la app</string>
-    <string name="theme_green">Verde (mockup)</string>
+    <string name="theme_green">Verde</string>
     <string name="theme_purple">Morado gulupa</string>
     <string name="theme_active">Activo</string>
     <string name="set_title">Configuración de cuenta</string>

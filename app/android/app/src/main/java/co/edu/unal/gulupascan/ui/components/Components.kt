@@ -42,7 +42,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.Stroke
-import androidx.compose.ui.graphics.drawscope.rotate
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.stringResource
@@ -57,59 +56,22 @@ import co.edu.unal.gulupascan.domain.Severity
 import co.edu.unal.gulupascan.ui.theme.BorderColor
 import co.edu.unal.gulupascan.ui.theme.Brand
 import co.edu.unal.gulupascan.ui.theme.BrandDark
-import co.edu.unal.gulupascan.ui.theme.LeafGreen
-import co.edu.unal.gulupascan.ui.theme.Pulp
-import co.edu.unal.gulupascan.ui.theme.Seed
 import co.edu.unal.gulupascan.ui.theme.TextSoft
 import coil.compose.AsyncImage
 import java.io.File
-import kotlin.math.cos
-import kotlin.math.sin
 
-/** Logo del mockup: gulupa abierta con semillas, anillo verde, tallo y hoja. */
+/** Encabezado de marca: logo + letrero "GulupaScan" + subtítulo. */
 @Composable
-fun GulupaLogo(modifier: Modifier = Modifier, size: Dp = 64.dp, ring: Color = Brand, onDark: Boolean = false) {
-    Canvas(modifier.size(size)) {
-        val w = this.size.width
-        val c = Offset(w / 2f, w * 0.58f)
-        val r = w * 0.38f
-        // Tallo y hoja
-        drawLine(ring, Offset(c.x, c.y - r), Offset(c.x + w * 0.04f, c.y - r - w * 0.12f), strokeWidth = w * 0.045f, cap = StrokeCap.Round)
-        val leaf = Path().apply {
-            val sx = c.x + w * 0.04f
-            val sy = c.y - r - w * 0.12f
-            moveTo(sx, sy)
-            cubicTo(sx + w * 0.06f, sy - w * 0.12f, sx + w * 0.22f, sy - w * 0.12f, sx + w * 0.28f, sy - w * 0.08f)
-            cubicTo(sx + w * 0.2f, sy + w * 0.02f, sx + w * 0.08f, sy + w * 0.04f, sx, sy)
-            close()
-        }
-        drawPath(leaf, LeafGreen)
-        // Fruto
-        if (onDark) drawCircle(Color.White, r * 1.02f, c)
-        drawCircle(Pulp, r * 0.8f, c)
-        drawCircle(ring, r * 0.9f, c, style = Stroke(width = r * 0.2f))
-        // Semillas en dos anillos
-        val seedSize = Size(r * 0.13f, r * 0.2f)
-        for (i in 0 until 8) {
-            val ang = Math.toRadians(i * 45.0)
-            val p = Offset(c.x + (r * 0.5f * cos(ang)).toFloat(), c.y + (r * 0.5f * sin(ang)).toFloat())
-            rotate(i * 45f + 90f, p) {
-                drawOval(Seed, Offset(p.x - seedSize.width / 2, p.y - seedSize.height / 2), seedSize)
-            }
-        }
-        drawCircle(Seed, r * 0.08f, c)
-    }
-}
-
-/** Encabezado de marca: logo + "GulupaScan" + subtítulo (como en todas las láminas del mockup). */
-@Composable
-fun BrandHeader(subtitle: String?, modifier: Modifier = Modifier, logoSize: Dp = 56.dp) {
+fun BrandHeader(subtitle: String?, modifier: Modifier = Modifier, logoSize: Dp = 64.dp) {
     Row(modifier, verticalAlignment = Alignment.CenterVertically) {
         GulupaLogo(size = logoSize)
         Spacer(Modifier.width(10.dp))
         Column {
-            Text(stringResource(R.string.app_name), style = MaterialTheme.typography.headlineMedium, color = BrandDark)
-            if (subtitle != null) Text(subtitle, style = MaterialTheme.typography.bodyMedium, color = TextSoft)
+            Wordmark(height = 30.dp, gulupaColor = BrandPalette.Plum, scanColor = BrandPalette.Green)
+            if (subtitle != null) {
+                Spacer(Modifier.height(4.dp))
+                Text(subtitle, style = MaterialTheme.typography.bodyMedium, color = TextSoft)
+            }
         }
     }
 }

@@ -351,7 +351,7 @@ private fun ThemeOption(theme: AppTheme, label: Int, selected: Boolean, modifier
             }
         }
         Spacer(Modifier.height(8.dp))
-        GulupaLogo(size = 40.dp, ring = b.main)
+        GulupaLogo(size = 40.dp)
         Spacer(Modifier.height(6.dp))
         Text(stringResource(label), style = MaterialTheme.typography.titleSmall, color = b.dark)
         if (selected) Text(stringResource(R.string.theme_active), style = MaterialTheme.typography.bodySmall, color = b.textSoft)

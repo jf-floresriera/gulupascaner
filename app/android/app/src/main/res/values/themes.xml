@@ -2,12 +2,12 @@
 <resources>
     <!-- Tema base de la ventana; los colores reales viven en ui/theme (Compose). -->
     <style name="Theme.GulupaScan" parent="android:Theme.Material.Light.NoActionBar">
-        <item name="android:windowBackground">@color/splash_green</item>
+        <item name="android:windowBackground">@color/cream</item>
         <item name="android:statusBarColor">@color/splash_green</item>
         <item name="android:navigationBarColor">@color/splash_green</item>
     </style>
 
-    <color name="splash_green">#FF0E4421</color>
-    <color name="cream">#FFF8F5EA</color>
-    <color name="ic_launcher_background">#FFF8F5EA</color>
+    <color name="splash_green">#FF9034BD</color>
+    <color name="cream">#FFF7F7F7</color>
+    <color name="ic_launcher_background">#FF9034BD</color>
 </resources>

@@ -40,33 +40,35 @@ data class BrandColors(
     val decorated: Boolean, // dibuja las formas orgánicas de la presentación
 )
 
+// Paleta de los logos: ciruela #5D2741, verde #005828, amarillo #FEDC7A,
+// morado #9034BD, hoja #00A85A, fondo claro #F7F7F7.
 val GreenBrand = BrandColors(
-    dark = Color(0xFF0E4421),
-    main = Color(0xFF1B5E32),
-    mid = Color(0xFF3E8E4A),
-    soft = Color(0xFFE3F0E3),
-    background = Color(0xFFF8F5EA),
-    card = Color(0xFFFFFDF6),
-    border = Color(0xFFE7E1CF),
-    surfaceVariant = Color(0xFFF1EDE0),
-    text = Color(0xFF1F2A22),
-    textSoft = Color(0xFF5C665E),
-    accent = Color(0xFF4CAF50),
+    dark = Color(0xFF005828),
+    main = Color(0xFF005828),
+    mid = Color(0xFF0B7A3E),
+    soft = Color(0xFFE1F2E7),
+    background = Color(0xFFF7F7F7),
+    card = Color(0xFFFFFFFF),
+    border = Color(0xFFE4E2E3),
+    surfaceVariant = Color(0xFFEFEDEE),
+    text = Color(0xFF2A1A22),
+    textSoft = Color(0xFF6A5E64),
+    accent = Color(0xFF00A85A),
     decorated = false,
 )
 
 val PurpleBrand = BrandColors(
-    dark = Color(0xFF5B3A7A),       // fondo de la lámina "¡Gracias!"
-    main = Color(0xFF6A4391),
-    mid = Color(0xFF8C6BC4),
-    soft = Color(0xFFEDE3F8),
-    background = Color(0xFFFDF1FB), // rosado claro de las formas orgánicas
-    card = Color(0xFFFFFBFE),
-    border = Color(0xFFEBD9F0),
-    surfaceVariant = Color(0xFFF4E9F6),
-    text = Color(0xFF2B1F36),
+    dark = Color(0xFF9034BD),
+    main = Color(0xFF5D2741),
+    mid = Color(0xFF9034BD),
+    soft = Color(0xFFF3E6F9),
+    background = Color(0xFFF7F7F7),
+    card = Color(0xFFFFFFFF),
+    border = Color(0xFFEADBF1),
+    surfaceVariant = Color(0xFFF2EAF5),
+    text = Color(0xFF2A1A22),
     textSoft = Color(0xFF6E6178),
-    accent = Color(0xFFA78BDA),     // lavanda del título "¡GRACIAS!"
+    accent = Color(0xFFD9B8EC),
     decorated = true,
 )
 
@@ -84,12 +86,12 @@ val TextMain: Color @Composable @ReadOnlyComposable get() = LocalBrand.current.t
 val TextSoft: Color @Composable @ReadOnlyComposable get() = LocalBrand.current.textSoft
 
 // ---- Colores fijos (iguales en ambos temas) ----
-val Pulp = Color(0xFFF6D365)           // pulpa de la gulupa
+val Pulp = Color(0xFFFEDC7A)           // pulpa de la gulupa
 val Seed = Color(0xFF1A1A1A)
-val LeafGreen = Color(0xFF4CAF50)
+val LeafGreen = Color(0xFF00A85A)
 val WarnBg = Color(0xFFFFF4D6)
 val WarnText = Color(0xFFD35400)
-val GulupaPurple = Color(0xFF5B3A7A)
+val GulupaPurple = Color(0xFF9034BD)
 val Neutral = Color(0xFF7A7A7A)
 
 // Colores por tipo de daño (leyendas del mockup): no cambian con el tema.
