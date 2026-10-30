@@ -106,6 +106,14 @@ Ya está listo: `backend/gulupa_pipeline.py` se activa solo cuando el servidor t
 `models/gulupa_seg.pt`. Pasos completos (clases a anotar, entrenamiento, dónde subir los pesos
 y cómo verificar): [`docs/guia-modelos.md`](../docs/guia-modelos.md).
 
+## Identidad visual
+
+- Logo y letrero: `res/drawable-nodpi/logo_gulupa.png`, `word_gulupa.png`, `word_scan.png`
+  (las palabras se colorean desde el código, ver `ui/components/Brand.kt`).
+- Paleta: ciruela `#5D2741`, verde `#005828`, amarillo `#FEDC7A`, morado `#9034BD`,
+  hoja `#00A85A`, fondo `#F7F7F7`.
+- Transición de colores (`AnimatedBrandLockup`): en el splash y durante la inferencia.
+
 ## Temas
 
 *Perfil › Configuración de cuenta › Tema de la app*: **Verde** (mockup) o **Morado gulupa**

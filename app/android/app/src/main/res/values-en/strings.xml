@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="splash_tagline">Detect damage on your gulupa</string>
+    <string name="splash_tagline">Detect scab on your gulupa</string>
+    <string name="proc_analyzing">Analyzing your gulupa…</string>
     <string name="ok">Got it</string>
     <string name="cancel">Cancel</string>
     <string name="back">Back</string>
@@ -137,7 +138,7 @@
     <string name="prof_about">About us</string>
     <string name="prof_logout">Sign out</string>
     <string name="set_theme">App theme</string>
-    <string name="theme_green">Green (mockup)</string>
+    <string name="theme_green">Green</string>
     <string name="theme_purple">Gulupa purple</string>
     <string name="theme_active">Active</string>
     <string name="set_title">Account settings</string>

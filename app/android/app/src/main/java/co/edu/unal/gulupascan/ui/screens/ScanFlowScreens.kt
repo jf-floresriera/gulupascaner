@@ -64,6 +64,7 @@ import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import co.edu.unal.gulupascan.R
 import co.edu.unal.gulupascan.ScanState
 import co.edu.unal.gulupascan.domain.Analysis
@@ -71,6 +72,7 @@ import co.edu.unal.gulupascan.domain.Classification
 import co.edu.unal.gulupascan.domain.Damage
 import co.edu.unal.gulupascan.domain.DamageCatalog
 import co.edu.unal.gulupascan.domain.Severity
+import co.edu.unal.gulupascan.ui.components.AnimatedBrandLockup
 import co.edu.unal.gulupascan.ui.components.ColorDot
 import co.edu.unal.gulupascan.ui.components.GsCard
 import co.edu.unal.gulupascan.ui.components.GsTopBar
@@ -109,6 +111,18 @@ fun ProcessingScreen(
     }
     Scaffold(topBar = { GsTopBar(stringResource(R.string.proc_title), onBack = onCancel) }) { pad ->
         Column(Modifier.padding(pad).fillMaxSize().padding(16.dp)) {
+            if (state !is ScanState.Failed) {
+                // Transición de colores de la identidad mientras corre la inferencia.
+                AnimatedBrandLockup(
+                    Modifier.fillMaxWidth().height(190.dp).clip(RoundedCornerShape(20.dp)),
+                    loop = true,
+                    logoSize = 92.dp,
+                    wordHeight = 28.dp,
+                    tagline = stringResource(R.string.proc_analyzing),
+                    taglineSize = 19.sp,
+                )
+                Spacer(Modifier.height(12.dp))
+            }
             Box(Modifier.fillMaxWidth().weight(1f).clip(RoundedCornerShape(16.dp))) {
                 PathImage(preview, Modifier.fillMaxSize())
                 if (state is ScanState.Processing) ScanLine(Modifier.fillMaxSize())

@@ -1,5 +1,11 @@
 # Changelog
 
+## [logos-transicion] - 2026-10-30
+- Nueva identidad visual: logo del fruto y letrero "GulupaScan" del equipo (imágenes con fondo
+  transparente), paleta ciruela/verde/amarillo/morado e ícono de la app sobre morado.
+- Transición de colores del logo en el inicio (splash) y mientras se hace la inferencia.
+- Lema "Detecta tu roña en la gulupa" con tipografía Patrick Hand (licencia OFL).
+
 ## [tema-morado-modelo-gulupa] - 2026-10-30
 - App: tema **Morado gulupa** (colores y formas de la presentación) seleccionable en Configuración.
 - Backend: `gulupa_pipeline.py` (YOLO11-seg: fruto, roña, daño mecánico, trips) que se activa al

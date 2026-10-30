@@ -41,39 +41,42 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import co.edu.unal.gulupascan.AppViewModel
 import co.edu.unal.gulupascan.R
+import co.edu.unal.gulupascan.ui.components.AnimatedBrandLockup
+import co.edu.unal.gulupascan.ui.components.BrandPalette
+import co.edu.unal.gulupascan.ui.components.BrandVariants
 import co.edu.unal.gulupascan.ui.components.GulupaLogo
+import co.edu.unal.gulupascan.ui.components.Wordmark
+import co.edu.unal.gulupascan.ui.theme.LocalBrand
 import co.edu.unal.gulupascan.ui.components.OrganicBlobs
 import co.edu.unal.gulupascan.ui.components.PrimaryButton
 import co.edu.unal.gulupascan.ui.theme.Brand
 import co.edu.unal.gulupascan.ui.theme.BrandDark
 import co.edu.unal.gulupascan.ui.theme.TextSoft
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
-/** Paso 1 del mockup: "Abrir app" — fondo verde oscuro con el logo. */
+/**
+ * Paso 1 "Abrir app": transición de colores de la identidad (las imágenes del logo una tras otra)
+ * y termina en la versión del tema activo.
+ */
 @Composable
 fun SplashScreen(loggedIn: Boolean?, onFinish: (loggedIn: Boolean) -> Unit) {
-    LaunchedEffect(loggedIn) {
-        if (loggedIn != null) {
-            delay(1400)
-            onFinish(loggedIn)
-        }
+    var animationDone by remember { mutableStateOf(false) }
+    val final = if (LocalBrand.current.decorated) BrandVariants.PurpleYellow else BrandVariants.GreenYellow
+    val sequence = remember(final) {
+        listOf(BrandVariants.LightGreen, BrandVariants.LightYellow, BrandVariants.PurpleGreen, final).distinct()
     }
-    Box(Modifier.fillMaxSize().background(BrandDark), contentAlignment = Alignment.Center) {
-        OrganicBlobs(Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background)
-        Column(horizontalAlignment = Alignment.CenterHorizontally) {
-            GulupaLogo(size = 120.dp, onDark = true)
-            Spacer(Modifier.height(16.dp))
-            Text(stringResource(R.string.app_name), color = Color.White, fontSize = 34.sp, fontWeight = FontWeight.Bold)
-            Spacer(Modifier.height(6.dp))
-            Text(
-                stringResource(R.string.splash_tagline),
-                color = Color.White.copy(alpha = 0.9f),
-                fontSize = 17.sp,
-                textAlign = TextAlign.Center,
-            )
-        }
+    LaunchedEffect(animationDone, loggedIn) {
+        if (animationDone && loggedIn != null) onFinish(loggedIn)
     }
+    AnimatedBrandLockup(
+        Modifier.fillMaxSize(),
+        sequence = sequence,
+        loop = false,
+        stepMillis = 650,
+        logoSize = 150.dp,
+        wordHeight = 44.dp,
+        onFinished = { animationDone = true },
+    )
 }
 
 /** Pantalla "Iniciar sesión" y "Regístrate" (lámina 2 del mockup). */
@@ -103,11 +106,9 @@ fun AuthScreen(vm: AppViewModel, onLoggedIn: () -> Unit) {
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         Spacer(Modifier.height(48.dp))
-        Row(verticalAlignment = Alignment.CenterVertically) {
-            GulupaLogo(size = 56.dp)
-            Spacer(Modifier.padding(4.dp))
-            Text(stringResource(R.string.app_name), style = MaterialTheme.typography.headlineMedium, color = BrandDark)
-        }
+        GulupaLogo(size = 96.dp)
+        Spacer(Modifier.height(8.dp))
+        Wordmark(height = 34.dp, gulupaColor = BrandPalette.Plum, scanColor = BrandPalette.Green)
         Spacer(Modifier.height(8.dp))
         Text(
             stringResource(if (registerMode) R.string.auth_register_sub else R.string.auth_login_sub),
