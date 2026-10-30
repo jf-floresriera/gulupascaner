@@ -28,16 +28,20 @@ jobs:
       run:
         working-directory: app/android
     steps:
-      - uses: actions/checkout@v5
+      - id: checkout
+        uses: actions/checkout@v5
 
-      - uses: actions/setup-java@v5
+      - id: java
+        uses: actions/setup-java@v5
         with:
           distribution: temurin
           java-version: "17"
 
-      - uses: android-actions/setup-android@v3
+      - id: android
+        uses: android-actions/setup-android@v3
 
-      - uses: gradle/actions/setup-gradle@v4
+      - id: gradle
+        uses: gradle/actions/setup-gradle@v4
 
       - name: Compilar APK (debug)
         run: |
@@ -83,6 +87,8 @@ jobs:
               (grep -E '^e: |^w: .*error|What went wrong|ERROR|FAILED|Could not' -A4 build.log || tail -n 80 build.log) | head -n 120
             else
               echo "No existe build.log: falló un paso antes de Gradle."
+              echo "checkout=${{ steps.checkout.outcome }} java=${{ steps.java.outcome }} android=${{ steps.android.outcome }} gradle=${{ steps.gradle.outcome }}"
+              ls -la . gradle/wrapper 2>&1 | head -30
             fi
             echo '```'
           } > comment.md
